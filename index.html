@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Media Program — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+<style>
+:root{--neon:#C8FF00;--black:#080808;--white:#F4F4EF;--gray:#141414;--mid:#777;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--black);font-family:'Inter',sans-serif;}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(8,8,8,0.9);border-bottom:1px solid rgba(200,255,0,0.12);backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--neon);letter-spacing:4px;}
+.nav-dots{display:flex;gap:5px;}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(200,255,0,0.2);cursor:pointer;transition:all .3s;}
+.dot.active{background:var(--neon);transform:scale(1.6);}
+.nav-counter{font-family:'Space Mono',monospace;font-size:11px;color:var(--mid);}
+.deck{width:100vw;height:100vh;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;opacity:0;transition:opacity .55s ease;padding-top:58px;}
+.slide.active{display:flex;opacity:1;}
+.arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:190;width:46px;height:46px;border:1px solid rgba(200,255,0,0.25);background:rgba(8,8,8,0.75);color:var(--neon);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;font-family:monospace;}
+.arrow:hover{background:var(--neon);color:var(--black);border-color:var(--neon);}
+.arrow-left{left:14px;}.arrow-right{right:14px;}
+.progress{position:fixed;bottom:0;left:0;height:2px;background:var(--neon);transition:width .4s ease;z-index:300;}
+.pbg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;}
+.ov-dark{position:absolute;inset:0;background:rgba(8,8,8,0.72);z-index:1;}
+.ov-left{position:absolute;inset:0;background:linear-gradient(to right,rgba(8,8,8,0.96) 44%,rgba(8,8,8,0.25) 100%);z-index:2;}
+.ov-neon{position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,255,0,0.1) 0%,transparent 55%);z-index:3;}
+.grain{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;}
+.geo-dots{position:absolute;z-index:4;pointer-events:none;background-image:radial-gradient(circle,rgba(200,255,0,0.22) 1px,transparent 1px);background-size:26px 26px;}
+.geo-rect{position:absolute;border:1px solid rgba(200,255,0,0.15);z-index:5;pointer-events:none;}
+.lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--neon);letter-spacing:4px;text-transform:uppercase;}
+.tag{display:inline-block;font-size:9px;background:var(--black);color:var(--neon);padding:3px 7px;font-family:'Space Mono',monospace;margin:2px 2px 0 0;}
+
+/* ── S1 TITLE ── */
+.s1{background:var(--black);flex-direction:row;overflow:hidden;}
+.s1 .pbg{background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1400&q=85');left:46%;filter:grayscale(25%);}
+.s1-left{width:55%;padding:56px 48px 40px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;}
+.s1-numeral{position:absolute;bottom:-30px;right:1%;font-family:'Bebas Neue',sans-serif;font-size:30vw;color:rgba(200,255,0,0.04);line-height:1;pointer-events:none;z-index:3;}
+.s1-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(66px,8.2vw,112px);line-height:.87;color:var(--white);}
+.s1-title span{color:var(--neon);}
+.s1-meta p{font-size:11px;color:var(--mid);font-family:'Space Mono',monospace;margin-bottom:4px;}
+.s1-meta p strong{color:var(--white);}
+.s1-badge{background:var(--neon);display:inline-block;padding:10px 20px;margin-top:16px;}
+.s1-badge-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--black);line-height:1;}
+.s1-badge-sub{font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,0,0,0.5);letter-spacing:2px;margin-top:3px;}
+
+/* ── S2 PROBLEM ── */
+.s2{background:var(--white);flex-direction:column;padding:70px 56px 36px;overflow:hidden;}
+.s2-head{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,6.2vw,86px);line-height:.89;color:var(--black);margin-bottom:34px;}
+.s2-head span{-webkit-text-stroke:2px var(--black);color:transparent;}
+.s2-cols{display:grid;grid-template-columns:1fr 1fr 1fr;flex:1;}
+.s2-col{padding:0 26px;}
+.s2-col:first-child{padding-left:0;}
+.s2-col+.s2-col{border-left:1px solid rgba(0,0,0,0.1);}
+.s2-num{font-family:'Bebas Neue',sans-serif;font-size:54px;color:var(--neon);background:var(--black);padding:0 10px;line-height:1;display:inline-block;margin-bottom:12px;}
+.s2-col h3{font-size:11px;font-weight:700;color:var(--black);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;}
+.s2-col p{font-size:12px;color:#444;line-height:1.65;}
+
+/* ── S3 VISION ── */
+.s3{overflow:hidden;align-items:center;justify-content:center;flex-direction:column;text-align:center;}
+.s3 .pbg{background-image:url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=85');filter:grayscale(55%);}
+.s3 .ov-dark{background:rgba(8,8,8,0.80);}
+.s3-inner{z-index:10;display:flex;flex-direction:column;align-items:center;padding:32px 80px;}
+.s3-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(46px,5.5vw,80px);color:var(--white);line-height:.97;max-width:840px;}
+.s3-big em{color:var(--neon);font-style:normal;}
+.s3-rule{width:68px;height:2px;background:var(--neon);margin:28px auto;}
+.s3-sub{font-size:13px;color:rgba(244,244,239,0.5);max-width:500px;line-height:1.85;font-weight:300;}
+
+/* ── S4 COMPARISON ── */
+.s4{background:var(--black);flex-direction:column;padding:70px 50px 26px;}
+.s4-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--white);margin-bottom:22px;}
+.s4-title span{color:var(--neon);}
+.s4-grid{display:grid;grid-template-columns:.85fr 2fr 2fr;flex:1;border:1px solid rgba(255,255,255,0.07);}
+.s4h{padding:11px 16px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--mid);border-bottom:1px solid rgba(255,255,255,0.07);text-transform:uppercase;}
+.s4h.cu{background:rgba(255,255,255,0.02);}
+.s4h.pr{background:rgba(200,255,0,0.07);color:var(--neon);}
+.s4c{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px;line-height:1.5;}
+.s4c.dim{color:rgba(255,255,255,0.22);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.06);}
+.s4c.cv{color:rgba(255,255,255,0.36);background:rgba(255,255,255,0.01);}
+.s4c.nv{color:var(--white);background:rgba(200,255,0,0.025);}
+.s4c.nv strong{color:var(--neon);}
+
+/* ── S5 CURRICULUM ── */
+.s5{background:var(--white);flex-direction:column;padding:70px 48px 26px;overflow:hidden;}
+.s5-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--black);margin-bottom:26px;}
+.s5-years{display:grid;grid-template-columns:repeat(4,1fr);flex:1;}
+.s5-yr{display:flex;flex-direction:column;padding:0 20px;border-left:1px solid rgba(0,0,0,0.1);}
+.s5-yr:first-child{border-left:none;padding-left:0;}
+.s5-n{font-family:'Bebas Neue',sans-serif;font-size:84px;line-height:1;color:var(--neon);background:var(--black);padding:0 12px;display:inline-block;align-self:flex-start;margin-bottom:12px;}
+.s5-yr-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--black);margin-bottom:9px;}
+.s5-yr-p{font-size:11px;color:#444;line-height:1.6;margin-bottom:12px;flex:1;}
+
+/* ── S6 Y1+Y2 ── */
+.s6{overflow:hidden;flex-direction:row;}
+.s6 .pbg{background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&q=85');}
+.s6 .ov-dark{background:rgba(8,8,8,0.84);}
+.s6-grid{z-index:10;width:100%;display:grid;grid-template-columns:1fr 1fr;height:100%;}
+.s6-panel{padding:68px 42px 34px;display:flex;flex-direction:column;justify-content:space-between;}
+.s6-panel:first-child{border-right:1px solid rgba(200,255,0,0.1);}
+.s6-yr{font-family:'Bebas Neue',sans-serif;font-size:128px;line-height:.82;color:var(--neon);}
+.s6-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);margin-bottom:16px;}
+.s6-list{list-style:none;}
+.s6-list li{font-size:12px;color:rgba(255,255,255,0.52);padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:9px;line-height:1.5;}
+.s6-list li::before{content:'//';font-family:'Space Mono',monospace;font-size:8px;color:var(--neon);margin-top:2px;flex-shrink:0;}
+.deliv{margin-top:16px;background:var(--neon);padding:13px 17px;}
+.deliv-lbl{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(0,0,0,0.4);text-transform:uppercase;margin-bottom:3px;}
+.deliv-name{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--black);}
+.deliv-dk{margin-top:16px;background:var(--black);padding:13px 17px;}
+.deliv-dk .deliv-lbl{color:rgba(255,255,255,0.3);}
+.deliv-dk .deliv-name{color:var(--neon);}
+
+/* ── S7 Y3+Y4 ── */
+.s7{overflow:hidden;flex-direction:row;}
+.s7 .pbg{background-image:url('https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=1400&q=85');}
+.s7 .ov-dark{background:rgba(244,244,239,0.9);}
+.s7-grid{z-index:10;width:100%;display:grid;grid-template-columns:1fr 1fr;height:100%;}
+.s7-panel{padding:68px 42px 34px;display:flex;flex-direction:column;justify-content:space-between;}
+.s7-panel:first-child{border-right:1px solid rgba(0,0,0,0.1);}
+.s7-yr{font-family:'Bebas Neue',sans-serif;font-size:128px;line-height:.82;color:var(--black);}
+.s7-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--black);margin-bottom:16px;}
+.s7-list{list-style:none;}
+.s7-list li{font-size:12px;color:#444;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.08);display:flex;gap:9px;line-height:1.5;}
+.s7-list li::before{content:'//';font-family:'Space Mono',monospace;font-size:8px;color:var(--black);margin-top:2px;flex-shrink:0;}
+
+/* ── S8 GRADUATES ── */
+.s8{overflow:hidden;flex-direction:column;}
+.s8 .pbg{background-image:url('https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1400&q=85');filter:grayscale(45%);}
+.s8 .ov-dark{background:rgba(8,8,8,0.82);}
+.s8-inner{z-index:10;width:100%;padding:68px 48px 26px;display:flex;flex-direction:column;flex:1;}
+.s8-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--white);margin-bottom:4px;}
+.s8-title span{color:var(--neon);}
+.s8-sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--mid);letter-spacing:2px;margin-bottom:26px;}
+.s8-roles{display:grid;grid-template-columns:repeat(5,1fr);flex:1;}
+.s8-role{display:flex;flex-direction:column;padding:22px 16px;border-left:1px solid rgba(200,255,0,0.1);justify-content:space-between;}
+.s8-role:first-child{border-left:none;}
+.s8-icon{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--neon);line-height:1;margin-bottom:auto;}
+.s8-rt{font-size:11px;font-weight:700;color:var(--white);margin-top:34px;margin-bottom:5px;line-height:1.2;}
+.s8-rd{font-size:10px;color:var(--mid);line-height:1.6;}
+.s8-tags{margin-top:9px;display:flex;flex-wrap:wrap;gap:3px;}
+.s8-tag{font-size:8px;font-family:'Space Mono',monospace;color:var(--neon);border:1px solid rgba(200,255,0,0.25);padding:2px 5px;}
+
+/* ── S9 INDUSTRY PARTNERS ── */
+.s9{overflow:hidden;flex-direction:row;}
+.s9 .pbg{background-image:url('https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=1400&q=85');filter:grayscale(20%);}
+.s9-left{width:40%;background:var(--neon);padding:68px 42px 38px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;}
+.s9-right{width:60%;padding:68px 42px 38px;background:rgba(8,8,8,0.9);display:flex;flex-direction:column;z-index:10;}
+.s9-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(68px,8.5vw,126px);color:var(--black);line-height:.87;}
+.s9-desc{font-size:11px;color:rgba(0,0,0,0.58);line-height:1.7;max-width:250px;}
+.s9-partners{display:flex;flex-direction:column;flex:1;}
+.s9-partner{padding:15px 0;border-bottom:1px solid rgba(200,255,0,0.1);display:flex;align-items:center;justify-content:space-between;}
+.s9-pn{font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--white);}
+.s9-pt{font-family:'Space Mono',monospace;font-size:8px;color:rgba(200,255,0,0.45);letter-spacing:2px;margin-top:2px;}
+.s9-arr{font-size:16px;color:rgba(200,255,0,0.28);}
+
+/* ── S10 CPD ── */
+.s10{overflow:hidden;flex-direction:column;}
+.s10 .pbg{background-image:url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1400&q=85');filter:grayscale(55%);}
+.s10 .ov-dark{background:rgba(8,8,8,0.86);}
+.s10-inner{z-index:10;width:100%;padding:68px 48px 26px;display:flex;flex-direction:column;flex:1;}
+.s10-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;}
+.s10-title{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--white);line-height:.87;}
+.s10-title span{color:var(--neon);}
+.s10-sn{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--neon);line-height:1;text-align:right;}
+.s10-sl{font-family:'Space Mono',monospace;font-size:9px;color:var(--mid);letter-spacing:2px;text-align:right;margin-top:2px;}
+.s10-formats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(200,255,0,0.05);flex:1;}
+.s10-fmt{background:rgba(16,16,16,0.97);padding:24px 20px;display:flex;flex-direction:column;gap:9px;}
+.s10-ftag{font-family:'Space Mono',monospace;font-size:9px;color:var(--neon);letter-spacing:2px;}
+.s10-ftitle{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1;}
+.s10-fdesc{font-size:11px;color:var(--mid);line-height:1.6;flex:1;}
+.s10-fdet{font-size:9px;color:rgba(200,255,0,0.4);font-family:'Space Mono',monospace;}
+
+/* ── S11 COURSES ── */
+.s11{background:var(--white);flex-direction:column;padding:68px 48px 26px;overflow:hidden;}
+.s11-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--black);margin-bottom:22px;}
+.s11-courses{display:grid;grid-template-columns:repeat(4,1fr);flex:1;}
+.s11-course{padding:20px 16px;border-left:3px solid #ccc;display:flex;flex-direction:column;gap:8px;}
+.s11-course:first-child{border-color:var(--black);background:rgba(0,0,0,0.025);}
+.s11-code{font-family:'Space Mono',monospace;font-size:9px;color:var(--mid);letter-spacing:3px;}
+.s11-ct{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--black);line-height:1;}
+.s11-cd{font-size:11px;color:#444;line-height:1.6;flex:1;}
+.s11-meta{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto;}
+
+/* ── S12 AI ── */
+.s12{overflow:hidden;flex-direction:row;}
+.s12 .pbg{background-image:url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1400&q=85');left:36%;}
+.s12-left{width:36%;background:var(--neon);padding:68px 36px 38px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;}
+.s12-right{width:64%;padding:68px 42px 38px;background:rgba(8,8,8,0.9);display:flex;flex-direction:column;z-index:10;}
+.s12-lbl{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(0,0,0,0.4);}
+.s12-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,7vw,96px);color:var(--black);line-height:.87;}
+.s12-note{font-size:11px;color:rgba(0,0,0,0.52);line-height:1.65;}
+.s12-blocks{display:flex;flex-direction:column;flex:1;}
+.s12-block{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.05);align-items:flex-start;}
+.s12-ytag{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--neon);flex-shrink:0;width:52px;}
+.s12-bc h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:3px;}
+.s12-bc p{font-size:11px;color:var(--mid);line-height:1.5;}
+.s12-tools{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.s12-tool{font-size:8px;font-family:'Space Mono',monospace;border:1px solid rgba(200,255,0,0.25);color:var(--neon);padding:2px 5px;}
+
+/* ── S13 ASSESSMENT ── */
+.s13{background:var(--white);flex-direction:column;padding:68px 48px 26px;overflow:hidden;}
+.s13-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--black);margin-bottom:22px;}
+.s13-table{width:100%;border-collapse:collapse;flex:1;}
+.s13-table thead th{padding:10px 16px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--mid);text-align:left;border-bottom:2px solid var(--black);}
+.s13-table thead th.hl{background:var(--black);color:var(--neon);}
+.s13-table tbody tr{border-bottom:1px solid rgba(0,0,0,0.06);}
+.s13-table tbody td{padding:12px 16px;font-size:11px;color:#333;vertical-align:top;line-height:1.5;}
+.s13-table tbody td:first-child{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--black);padding-top:8px;}
+.s13-table tbody td.hl{background:rgba(200,255,0,0.06);font-weight:600;color:var(--black);}
+.atag{display:inline-block;background:var(--black);color:var(--neon);font-family:'Space Mono',monospace;font-size:7px;padding:2px 6px;margin-top:3px;}
+
+/* ── S14 ROADMAP ── */
+.s14{background:var(--black);flex-direction:column;padding:68px 48px 26px;overflow:hidden;}
+.s14-title{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--white);margin-bottom:32px;}
+.s14-title span{color:var(--neon);}
+.s14-phases{display:grid;grid-template-columns:repeat(4,1fr);flex:1;}
+.s14-phase{display:flex;flex-direction:column;padding:0 26px;border-left:1px solid rgba(200,255,0,0.1);}
+.s14-phase:first-child{border-left:none;padding-left:0;}
+.s14-period{font-family:'Space Mono',monospace;font-size:8px;color:var(--neon);letter-spacing:2px;margin-bottom:7px;}
+.s14-pt{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1;margin-bottom:16px;}
+.s14-items{list-style:none;}
+.s14-items li{font-size:11px;color:rgba(255,255,255,0.42);padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:7px;line-height:1.4;}
+.s14-items li::before{content:'→';font-family:'Space Mono',monospace;font-size:8px;color:var(--neon);flex-shrink:0;margin-top:1px;}
+
+/* ── S15 WHY NOW ── */
+.s15{overflow:hidden;flex-direction:row;}
+.s15 .pbg{background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=85');filter:grayscale(25%);}
+.s15-left{width:42%;background:var(--neon);padding:68px 44px 38px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;}
+.s15-right{width:58%;padding:68px 44px 38px;background:rgba(8,8,8,0.9);display:flex;flex-direction:column;z-index:10;}
+.s15-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,8.8vw,120px);color:var(--black);line-height:.82;}
+.s15-desc{font-size:11px;color:rgba(0,0,0,0.56);line-height:1.75;}
+.s15-stats{display:flex;flex-direction:column;flex:1;}
+.s15-stat{display:flex;gap:20px;align-items:baseline;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.s15-sn{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--neon);flex-shrink:0;line-height:1;}
+.s15-st{font-size:11px;color:rgba(255,255,255,0.46);line-height:1.5;}
+
+/* ── S16 CTA ── */
+.s16{overflow:hidden;flex-direction:column;}
+.s16 .pbg{background-image:url('https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1400&q=85');filter:grayscale(35%);}
+.s16 .ov-dark{background:rgba(200,255,0,0.93);}
+.s16-inner{z-index:10;width:100%;padding:68px 56px 34px;display:flex;flex-direction:column;justify-content:space-between;flex:1;}
+.s16-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:4px;color:rgba(0,0,0,0.4);text-transform:uppercase;}
+.s16-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,8vw,112px);color:var(--black);line-height:.87;}
+.s16-asks{display:grid;grid-template-columns:repeat(4,1fr);}
+.s16-ask{padding:20px 20px 20px 0;border-right:1px solid rgba(0,0,0,0.1);}
+.s16-ask:last-child{border-right:none;}
+.s16-an{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--black);line-height:1;}
+.s16-at{font-size:11px;color:rgba(0,0,0,0.62);line-height:1.5;margin-top:4px;}
+.s16-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(0,0,0,0.1);padding-top:16px;}
+.s16-ft{font-family:'Space Mono',monospace;font-size:9px;color:rgba(0,0,0,0.38);}
+.s16-ty{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--black);letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">IMP // 2025</div>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-counter" id="navCounter">01 / 16</div>
+</nav>
+<div class="progress" id="progress"></div>
+<button class="arrow arrow-left" id="arL" onclick="changeSlide(-1)">&#8592;</button>
+<button class="arrow arrow-right" id="arR" onclick="changeSlide(1)">&#8594;</button>
+
+<div class="deck">
+
+<!-- S1 TITLE -->
+<div class="slide s1 active" data-index="0">
+  <div class="pbg"></div>
+  <div class="ov-left"></div>
+  <div class="ov-neon"></div>
+  <div class="grain"></div>
+  <div class="s1-numeral">4</div>
+  <div style="position:absolute;top:120px;left:0;width:56%;height:1px;background:rgba(200,255,0,0.18);z-index:5;"></div>
+  <div class="s1-left">
+    <div class="lbl">// University Pitch Deck — 2025</div>
+    <div class="s1-title">INTER<span>—</span><br>ACTIVE<br>MEDIA<br>PRO<span>GRAM</span></div>
+    <div>
+      <div class="s1-meta">
+        <p><strong>Presented to</strong> — University President &amp; Committee</p>
+        <p><strong>Faculty</strong> — Film &amp; Animation Department</p>
+        <p><strong>Date</strong> — April 2025</p>
+      </div>
+      <div class="s1-badge">
+        <div class="s1-badge-title">A 4-YEAR PROGRAM DESIGN</div>
+        <div class="s1-badge-sub">// CREATIVE TECH · UX · AI · ROBOTICS</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S2 PROBLEM -->
+<div class="slide s2" data-index="1">
+  <div class="lbl" style="position:absolute;top:70px;left:56px;color:#999;">// 02 — The Problem</div>
+  <div class="geo-dots" style="right:0;top:0;width:18%;height:100%;opacity:.7;"></div>
+  <div style="margin-top:28px;width:100%;">
+    <div class="s2-head">THE<br>PROBLEM<br><span>WE SOLVE</span></div>
+    <div class="s2-cols">
+      <div class="s2-col">
+        <div class="s2-num">01</div>
+        <h3>Industry Mismatch</h3>
+        <p>The creative technology sector is rapidly expanding into automotive, AR/VR, robotics, and smart devices — yet our current program trains primarily for film and entertainment pipelines.</p>
+      </div>
+      <div class="s2-col">
+        <div class="s2-num">02</div>
+        <h3>Tool Stack Gap</h3>
+        <p>Graduates leave with Maya, Photoshop and After Effects — strong foundations, but missing Unity, TouchDesigner, Arduino, Raspberry Pi and generative AI tools now standard in studios.</p>
+      </div>
+      <div class="s2-col">
+        <div class="s2-num">03</div>
+        <h3>Missed Revenue</h3>
+        <p>Working professionals in the region have no structured upskilling pathway. CPD courses and industry training remain an untapped revenue stream for the university.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 VISION -->
+<div class="slide s3" data-index="2">
+  <div class="pbg"></div>
+  <div class="ov-dark"></div>
+  <div class="geo-rect" style="width:66%;height:68%;left:17%;top:16%;"></div>
+  <div class="grain"></div>
+  <div class="s3-inner">
+    <div class="lbl" style="margin-bottom:24px;">// 03 — Program Vision</div>
+    <div class="s3-big">To train the next generation of <em>creative technologists</em> who design at the intersection of animation, code, hardware, and <em>human experience</em></div>
+    <div class="s3-rule"></div>
+    <div class="s3-sub">A 4-year degree bridging creative disciplines with emerging technology — producing graduates ready for automotive, XR, AI, robotics, and interactive media industries.</div>
+  </div>
+</div>
+
+<!-- S4 COMPARISON -->
+<div class="slide s4" data-index="3">
+  <div class="s4-title">PROGRAM <span>COMPARISON</span></div>
+  <div class="s4-grid">
+    <div class="s4h">DIMENSION</div><div class="s4h cu">CURRENT // Animation Program</div><div class="s4h pr">PROPOSED // Interactive Media</div>
+    <div class="s4c dim">Focus</div><div class="s4c cv">2D / 3D animation &amp; storytelling</div><div class="s4c nv">Animation + sensors, robotics, <strong>UI/UX, AI</strong></div>
+    <div class="s4c dim">Capstone</div><div class="s4c cv">Traditional short film</div><div class="s4c nv">Interactive sensor-integrated <strong>installation</strong></div>
+    <div class="s4c dim">Tools</div><div class="s4c cv">Maya, Photoshop, After Effects</div><div class="s4c nv">Unity, TouchDesigner, Arduino, <strong>Runway ML</strong></div>
+    <div class="s4c dim">Graduates</div><div class="s4c cv">Animator / VFX Artist</div><div class="s4c nv"><strong>Creative Technologist, UX Engineer, XR Designer</strong></div>
+    <div class="s4c dim">Industries</div><div class="s4c cv">Film / TV / Games</div><div class="s4c nv">Automotive, <strong>AR/VR, Robotics</strong>, Smart Devices</div>
+    <div class="s4c dim">Collaboration</div><div class="s4c cv">Single-discipline</div><div class="s4c nv"><strong>Cross-disciplinary</strong> — design, code, hardware, UX</div>
+  </div>
+</div>
+
+<!-- S5 CURRICULUM -->
+<div class="slide s5" data-index="4">
+  <div class="s5-title">4-YEAR CURRICULUM OVERVIEW</div>
+  <div class="s5-years">
+    <div class="s5-yr"><div class="s5-n">01</div><div class="s5-yr-t">Foundations</div><div class="s5-yr-p">Animation principles, design fundamentals, basic electronics. Introduction to physical computing with Arduino sensor input.</div><div><span class="tag">Animation</span><span class="tag">Arduino</span><span class="tag">Design</span></div></div>
+    <div class="s5-yr"><div class="s5-n">02</div><div class="s5-yr-t">Digital Integration</div><div class="s5-yr-p">Processing, Unity, Unreal Engine, AI concept art pipelines. Interactive installations with motion sensors and real-time code.</div><div><span class="tag">Unity</span><span class="tag">Unreal</span><span class="tag">Gen AI</span></div></div>
+    <div class="s5-yr"><div class="s5-n">03</div><div class="s5-yr-t">Advanced UX/UI</div><div class="s5-yr-p">Human-machine interface design, haptic feedback, robotics. Car dashboard prototypes with Agile/Scrum methodology.</div><div><span class="tag">UX/UI</span><span class="tag">Robotics</span><span class="tag">HMI</span></div></div>
+    <div class="s5-yr"><div class="s5-n">04</div><div class="s5-yr-t">Industry Capstone</div><div class="s5-yr-p">Partner-defined briefs, industry jury presentation. Festival-ready interactive films or sensor-reactive ML installations.</div><div><span class="tag">Capstone</span><span class="tag">ML</span><span class="tag">Portfolio</span></div></div>
+  </div>
+</div>
+
+<!-- S6 Y1+Y2 -->
+<div class="slide s6" data-index="5">
+  <div class="pbg"></div><div class="ov-dark"></div><div class="grain"></div>
+  <div class="s6-grid">
+    <div class="s6-panel">
+      <div>
+        <div class="lbl" style="color:rgba(200,255,0,0.45);margin-bottom:6px;">// 06 — YEAR 1 &amp; 2</div>
+        <div class="s6-yr">Y1</div>
+        <div class="s6-title">FOUNDATIONS</div>
+        <ul class="s6-list">
+          <li>Animation principles &amp; design fundamentals</li>
+          <li>Basic electronics &amp; physical computing intro</li>
+          <li>Design critique culture &amp; peer feedback loops</li>
+          <li>Outcome: functional animated prototype with sensor input</li>
+        </ul>
+      </div>
+      <div class="deliv"><div class="deliv-lbl">// DELIVERABLE</div><div class="deliv-name">ANIMATED SHORT + ARDUINO SENSOR PROTOTYPE</div></div>
+    </div>
+    <div class="s6-panel">
+      <div>
+        <div class="s6-yr">Y2</div>
+        <div class="s6-title">DIGITAL INTEGRATION</div>
+        <ul class="s6-list">
+          <li>Processing, Unity &amp; Unreal Engine</li>
+          <li>Interactive installations with motion sensors</li>
+          <li>Midjourney / Stable Diffusion concept pipelines</li>
+          <li>Client brief simulation &amp; stakeholder presentations</li>
+        </ul>
+      </div>
+      <div class="deliv"><div class="deliv-lbl">// DELIVERABLE</div><div class="deliv-name">DOCUMENTED INTERACTIVE INSTALLATION — EXHIBITION</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 Y3+Y4 -->
+<div class="slide s7" data-index="6">
+  <div class="pbg"></div><div class="ov-dark"></div><div class="grain"></div>
+  <div class="s7-grid">
+    <div class="s7-panel">
+      <div>
+        <div class="lbl" style="color:#888;margin-bottom:6px;">// 07 — YEAR 3 &amp; 4</div>
+        <div class="s7-yr">Y3</div>
+        <div class="s7-title">ADVANCED UX / HMI</div>
+        <ul class="s7-list">
+          <li>Human factors, accessibility &amp; ISO automotive HMI standards</li>
+          <li>Haptic feedback &amp; robotics interaction design</li>
+          <li>Agile / Scrum sprint methodology</li>
+          <li>IP, ethics &amp; practice in interactive media</li>
+        </ul>
+      </div>
+      <div class="deliv-dk"><div class="deliv-lbl">// DELIVERABLE</div><div class="deliv-name">CAR DASHBOARD PROTOTYPE WITH HAPTIC FEEDBACK</div></div>
+    </div>
+    <div class="s7-panel">
+      <div>
+        <div class="s7-yr">Y4</div>
+        <div class="s7-title">INDUSTRY CAPSTONE</div>
+        <ul class="s7-list">
+          <li>Partner-defined briefs — real NDA client experience</li>
+          <li>Industry jury panel presentation &amp; iteration</li>
+          <li>Custom AI-integrated sensor-reactive installation</li>
+          <li>Contract basics, personal brand &amp; portfolio strategy</li>
+        </ul>
+      </div>
+      <div class="deliv-dk"><div class="deliv-lbl">// DELIVERABLE</div><div class="deliv-name">FULL DIGITAL PORTFOLIO + INDUSTRY JURY REVIEW</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 GRADUATES -->
+<div class="slide s8" data-index="7">
+  <div class="pbg"></div><div class="ov-dark"></div><div class="grain"></div>
+  <div class="s8-inner">
+    <div class="s8-title">GRADUATE <span>PROFILE</span></div>
+    <div class="s8-sub">// CAREER OUTCOMES — WHERE OUR GRADUATES GO</div>
+    <div class="s8-roles">
+      <div class="s8-role"><div class="s8-icon">CT</div><div><div class="s8-rt">Creative Technologist</div><div class="s8-rd">Agencies, studios &amp; innovation labs. Bridges creative vision with technical execution.</div><div class="s8-tags"><span class="s8-tag">AGENCIES</span><span class="s8-tag">STUDIOS</span></div></div></div>
+      <div class="s8-role"><div class="s8-icon">UX</div><div><div class="s8-rt">UX Engineer</div><div class="s8-rd">Tech, automotive &amp; healthcare. Designs human-machine interfaces at scale.</div><div class="s8-tags"><span class="s8-tag">AUTOMOTIVE</span><span class="s8-tag">TECH</span></div></div></div>
+      <div class="s8-role"><div class="s8-icon">XR</div><div><div class="s8-rt">XR Designer</div><div class="s8-rd">AR / VR &amp; spatial computing. Builds immersive interactive experiences.</div><div class="s8-tags"><span class="s8-tag">AR/VR</span><span class="s8-tag">SPATIAL</span></div></div></div>
+      <div class="s8-role"><div class="s8-icon">AI</div><div><div class="s8-rt">AI Artist</div><div class="s8-rd">Generative AI &amp; prompt engineering. Emerging 2025+ creative sector.</div><div class="s8-tags"><span class="s8-tag">GEN AI</span><span class="s8-tag">CREATIVE</span></div></div></div>
+      <div class="s8-role"><div class="s8-icon">PC</div><div><div class="s8-rt">IoT Designer</div><div class="s8-rd">Physical computing &amp; IoT product design. Smart device interaction specialist.</div><div class="s8-tags"><span class="s8-tag">IOT</span><span class="s8-tag">HARDWARE</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 INDUSTRY PARTNERS -->
+<div class="slide s9" data-index="8">
+  <div class="pbg"></div>
+  <div class="s9-left">
+    <div class="lbl" style="color:rgba(0,0,0,0.38);">// 09 — INDUSTRY</div>
+    <div class="s9-big">INDUS<br>TRY<br>PART<br>NERS</div>
+    <div class="s9-desc">3–5 organisations co-define Year 4 briefs, sit on capstone juries, and give students real NDA client experience on their CVs.</div>
+  </div>
+  <div class="s9-right">
+    <div class="lbl" style="margin-bottom:18px;">// TARGET PARTNER TYPES</div>
+    <div class="s9-partners">
+      <div class="s9-partner"><div><div class="s9-pn">AUTOMOTIVE STUDIO</div><div class="s9-pt">// HMI · DASHBOARD · INTERFACE DESIGN</div></div><div class="s9-arr">→</div></div>
+      <div class="s9-partner"><div><div class="s9-pn">XR AGENCY</div><div class="s9-pt">// AR / VR · SPATIAL COMPUTING · MIXED REALITY</div></div><div class="s9-arr">→</div></div>
+      <div class="s9-partner"><div><div class="s9-pn">GAME STUDIO</div><div class="s9-pt">// INTERACTIVE NARRATIVE · REAL-TIME ENVIRONMENTS</div></div><div class="s9-arr">→</div></div>
+      <div class="s9-partner"><div><div class="s9-pn">CIVIC TECH LAB</div><div class="s9-pt">// PUBLIC INSTALLATIONS · SMART CITIES · UX RESEARCH</div></div><div class="s9-arr">→</div></div>
+      <div class="s9-partner"><div><div class="s9-pn">AI / CREATIVE STUDIO</div><div class="s9-pt">// GENERATIVE AI · PROMPT ENGINEERING · ART TECH</div></div><div class="s9-arr">→</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 CPD -->
+<div class="slide s10" data-index="9">
+  <div class="pbg"></div><div class="ov-dark"></div><div class="grain"></div>
+  <div class="s10-inner">
+    <div class="s10-head">
+      <div class="s10-title">PROFESSIONAL<br><span>TRAINING</span><br>&amp; CPD</div>
+      <div><div class="s10-sn">3X</div><div class="s10-sl">// Revenue vs degree-only model</div></div>
+    </div>
+    <div class="s10-formats">
+      <div class="s10-fmt"><div class="s10-ftag">// FORMAT 01</div><div class="s10-ftitle">EVENING COURSES</div><div class="s10-fdesc">Weekly sessions designed for full-time professionals. 8–12 week cohort model with hands-on studio time. Certificates on completion.</div><div class="s10-fdet">MON — THURS · 6:30PM – 9:30PM</div></div>
+      <div class="s10-fmt"><div class="s10-ftag">// FORMAT 02</div><div class="s10-ftitle">WEEKEND INTENSIVES</div><div class="s10-fdesc">Compressed 2-day deep dives into specific tools or workflows. Ideal for upskilling teams. Corporate group rates available.</div><div class="s10-fdet">SAT – SUN · FULL DAY WORKSHOP</div></div>
+      <div class="s10-fmt"><div class="s10-ftag">// FORMAT 03</div><div class="s10-ftitle">ONLINE ASYNC</div><div class="s10-fdesc">Self-paced modules with live Q&amp;A sessions. Global reach. Scales without additional physical infrastructure investment.</div><div class="s10-fdet">24 / 7 ACCESS · GLOBAL COHORTS</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S11 COURSES -->
+<div class="slide s11" data-index="10">
+  <div class="s11-title">INDUSTRY TRAINING COURSES</div>
+  <div class="s11-courses">
+    <div class="s11-course"><div class="s11-code">// CPD-01</div><div class="s11-ct">UX / UI FOR INTERACTIVE MEDIA</div><div class="s11-cd">Human-centred design for interactive screens, installations, and automotive interfaces. Figma, prototyping, user testing, and ISO HMI standards.</div><div class="s11-meta"><span class="tag">8 WEEKS</span><span class="tag">EVENING</span><span class="tag">CERT.</span></div></div>
+    <div class="s11-course"><div class="s11-code">// CPD-02</div><div class="s11-ct">PHYSICAL COMPUTING &amp; IoT</div><div class="s11-cd">Arduino, Raspberry Pi, sensors, and actuators for interactive products. Build real hardware prototypes with practical workshop sessions throughout.</div><div class="s11-meta"><span class="tag">10 WEEKS</span><span class="tag">WEEKEND</span><span class="tag">CERT.</span></div></div>
+    <div class="s11-course"><div class="s11-code">// CPD-03</div><div class="s11-ct">GENERATIVE AI FOR CREATIVES</div><div class="s11-cd">Midjourney, Stable Diffusion, Runway ML, and ElevenLabs in professional creative workflows. Prompt engineering, ethics, and client-ready delivery.</div><div class="s11-meta"><span class="tag">6 WEEKS</span><span class="tag">ONLINE</span><span class="tag">CERT.</span></div></div>
+    <div class="s11-course"><div class="s11-code">// CPD-04</div><div class="s11-ct">XR EXPERIENCE DESIGN</div><div class="s11-cd">Designing for AR, VR, and mixed reality using Unity and Unreal Engine. Spatial UI, immersive narrative, performance optimisation, and deployment.</div><div class="s11-meta"><span class="tag">12 WEEKS</span><span class="tag">EVENING</span><span class="tag">CERT.</span></div></div>
+  </div>
+</div>
+
+<!-- S12 AI -->
+<div class="slide s12" data-index="11">
+  <div class="pbg"></div>
+  <div class="s12-left">
+    <div><div class="s12-lbl">// 12 — AI INTEGRATION</div><div class="s12-big">GEN<br>ERA<br>TIVE<br>AI</div></div>
+    <div class="s12-note">AI is not a trend — it's the fastest-growing creative technology sector. We embed it as a core tool across Years 2–4.</div>
+  </div>
+  <div class="s12-right">
+    <div class="lbl" style="color:rgba(255,255,255,0.22);margin-bottom:20px;">// AI INTEGRATION BY YEAR</div>
+    <div class="s12-blocks">
+      <div class="s12-block"><div class="s12-ytag">Y2</div><div class="s12-bc"><h4>Concept Art Pipelines</h4><p>Integrate AI image generation into the design workflow — fast iteration, client visualisation, and concept exploration at scale.</p><div class="s12-tools"><span class="s12-tool">MIDJOURNEY</span><span class="s12-tool">STABLE DIFFUSION</span></div></div></div>
+      <div class="s12-block"><div class="s12-ytag">Y3</div><div class="s12-bc"><h4>Interactive Narrative Prototyping</h4><p>AI-driven video, audio, and dialogue systems for interactive media and experience prototyping.</p><div class="s12-tools"><span class="s12-tool">RUNWAY ML</span><span class="s12-tool">ELEVENLABS</span></div></div></div>
+      <div class="s12-block"><div class="s12-ytag">Y4</div><div class="s12-bc"><h4>Live ML Capstone</h4><p>Custom AI-integrated capstone — a sensor-reactive installation driven by a live machine learning model, presented to industry jury.</p><div class="s12-tools"><span class="s12-tool">CUSTOM ML</span><span class="s12-tool">TOUCHDESIGNER</span><span class="s12-tool">ARDUINO</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S13 ASSESSMENT -->
+<div class="slide s13" data-index="12">
+  <div class="s13-title">ASSESSMENT &amp; PORTFOLIO STRATEGY</div>
+  <table class="s13-table">
+    <thead><tr><th>Year</th><th>Primary Assessment</th><th class="hl">Portfolio Artefact</th><th>Outcome Achieved</th></tr></thead>
+    <tbody>
+      <tr><td>01</td><td>Peer-reviewed prototype with sensor input demonstration</td><td class="hl">Animated interactive demo<br><span class="atag">VIDEO + DOCUMENTATION</span></td><td>Produce a functional animated prototype responding to physical sensor input</td></tr>
+      <tr><td>02</td><td>Exhibition critique — public installation reviewed by peers and faculty</td><td class="hl">Documented installation<br><span class="atag">EXHIBITION + WRITEUP</span></td><td>Deploy an interactive installation handling real-time user input via code</td></tr>
+      <tr><td>03</td><td>Client-panel presentation with UX documentation package</td><td class="hl">UX case study PDF<br><span class="atag">CASE STUDY + PROTOTYPE</span></td><td>Deliver a tested UX prototype meeting industry handoff standards</td></tr>
+      <tr><td>04</td><td>Industry jury presentation + reflective essay on practice</td><td class="hl">Full digital portfolio<br><span class="atag">PORTFOLIO WEBSITE</span></td><td>Present a portfolio-ready capstone to industry panel and iterate on feedback</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- S14 ROADMAP -->
+<div class="slide s14" data-index="13">
+  <div class="geo-dots" style="right:0;top:58px;width:26%;height:100%;opacity:.5;"></div>
+  <div class="s14-title">IMPLEMENTATION <span>ROADMAP</span></div>
+  <div class="s14-phases">
+    <div class="s14-phase"><div class="s14-period">// NOW — MONTH 3</div><div class="s14-pt">QUICK WINS</div><ul class="s14-items"><li>Add program mission statement</li><li>Define learning outcomes per year</li><li>Build student personas</li><li>Recruit 2 pilot industry partners</li><li>Launch CPD course waitlist</li></ul></div>
+    <div class="s14-phase"><div class="s14-period">// MONTH 3 — 9</div><div class="s14-pt">PILOT COHORT</div><ul class="s14-items"><li>Enrol Year 1 pilot group (20 students)</li><li>Hire cross-disciplinary faculty</li><li>Set up physical computing lab</li><li>Launch CPD Evening Course 01</li><li>Formalise first 3 partners</li></ul></div>
+    <div class="s14-phase"><div class="s14-period">// YEAR 1 — 2</div><div class="s14-pt">FULL LAUNCH</div><ul class="s14-items"><li>Full Year 1 &amp; 2 intake open</li><li>All 4 CPD courses running</li><li>Online async platform live</li><li>5 industry partners confirmed</li><li>First public capstone exhibition</li></ul></div>
+    <div class="s14-phase"><div class="s14-period">// YEAR 3 — 4</div><div class="s14-pt">MATURITY</div><ul class="s14-items"><li>First full cohort graduates</li><li>Annual industry curriculum review</li><li>International CPD partnerships</li><li>Alumni network &amp; mentorship</li><li>Research &amp; innovation grants</li></ul></div>
+  </div>
+</div>
+
+<!-- S15 WHY NOW -->
+<div class="slide s15" data-index="14">
+  <div class="pbg"></div><div class="grain"></div>
+  <div class="s15-left">
+    <div class="lbl" style="color:rgba(0,0,0,0.38);">// 15 — WHY NOW</div>
+    <div class="s15-big">WHY<br>NOW</div>
+    <div class="s15-desc">The creative technology sector is at an inflection point. Universities that adapt now will define the talent pipeline for the next decade.</div>
+  </div>
+  <div class="s15-right">
+    <div class="lbl" style="color:rgba(200,255,0,0.38);margin-bottom:2px;">// MARKET SIGNALS</div>
+    <div class="s15-stats">
+      <div class="s15-stat"><div class="s15-sn">43%</div><div class="s15-st">of creative jobs now require coding or physical computing skills — up from 12% in 2018 (LinkedIn Workforce Report)</div></div>
+      <div class="s15-stat"><div class="s15-sn">$780B</div><div class="s15-st">global XR market projected by 2030 — demand for XR designers far outpacing supply</div></div>
+      <div class="s15-stat"><div class="s15-sn">67%</div><div class="s15-st">of regional employers surveyed cannot find graduates who bridge design and technology disciplines</div></div>
+      <div class="s15-stat"><div class="s15-sn">#1</div><div class="s15-st">Opportunity to position this university as the regional leader in creative technology education — before competitors act</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S16 CTA -->
+<div class="slide s16" data-index="15">
+  <div class="pbg"></div><div class="ov-dark"></div><div class="grain"></div>
+  <div class="s16-inner">
+    <div><div class="s16-lbl">// 16 — Call to Action</div><div class="s16-title">WE<br>ASK FOR<br>YOUR<br>APPROVAL</div></div>
+    <div class="s16-asks">
+      <div class="s16-ask"><div class="s16-an">01</div><div class="s16-at">Approve the 4-Year Interactive Media Program for the 2026 academic intake</div></div>
+      <div class="s16-ask"><div class="s16-an">02</div><div class="s16-at">Fund a pilot cohort of 20 students beginning Semester 1, 2025</div></div>
+      <div class="s16-ask"><div class="s16-an">03</div><div class="s16-at">Greenlight the CPD Professional Training programme to launch in parallel</div></div>
+      <div class="s16-ask"><div class="s16-an">04</div><div class="s16-at">Authorise faculty to formalise 3 industry partnerships within 90 days</div></div>
+    </div>
+    <div class="s16-footer">
+      <div class="s16-ft">// Film &amp; Animation Department — Interactive Media Program Proposal — 2025</div>
+      <div class="s16-ty">THANK YOU</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+<script>
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('navDots');
+const counter=document.getElementById('navCounter');
+const prog=document.getElementById('progress');
+const total=slides.length;
+let cur=0;
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goTo(i);dotsEl.appendChild(d);});
+function goTo(n){slides[cur].classList.remove('active');cur=Math.max(0,Math.min(n,total-1));slides[cur].classList.add('active');document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));counter.textContent=String(cur+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');prog.style.width=((cur+1)/total*100)+'%';document.getElementById('arL').style.opacity=cur===0?'0.2':'1';document.getElementById('arR').style.opacity=cur===total-1?'0.2':'1';}
+function changeSlide(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+let ts=0;
+document.addEventListener('touchstart',e=>ts=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const diff=ts-e.changedTouches[0].clientX;if(Math.abs(diff)>50)changeSlide(diff>0?1:-1);});
+goTo(0);
+</script>
+</body>
+</html>
